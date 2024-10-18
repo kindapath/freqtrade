@@ -31,8 +31,10 @@ if [ "$COMMIT_TO_LOCAL_REPO" = true ] ; then
 
     #commit update strategy file to local repo
     cd $FREQTRADE_HOME/user_data/strategies
+    NFIversion=$(grep -oP '(?<=return ").*(?=")' NostalgiaForInfinityX5.py)
+    echo $NFIversion
     git add NostalgiaForInfinityX5.py
-    git commit -m "update: updated nfix strategy"
+    git commit -m "update: updated nfix strategy to version $NFIversion"
     git push
 
 fi

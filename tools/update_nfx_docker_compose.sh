@@ -31,7 +31,7 @@ if [ "$COMMIT_TO_LOCAL_REPO" = true ] ; then
 
     #commit update strategy file to local repo
     cd $FREQTRADE_HOME/user_data/strategies
-    git add NostalgiaForInfinityX.py
+    git add NostalgiaForInfinityX5.py
     git commit -m "update: updated nfix strategy"
     git push
 

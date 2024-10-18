@@ -1,5 +1,6 @@
 {
   "trading_mode": "spot",
   "dataformat_ohlcv": "feather",
-  "dataformat_trades": "feather"
+  "dataformat_trades": "feather",
+  "can_short": false
 }

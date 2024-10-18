@@ -1,36 +1,36 @@
 ---
 services:
   freqtrade:
-    image: freqtradeorg/freqtrade:stable
-    # image: freqtradeorg/freqtrade:develop
-    # Use plotting image
-    # image: freqtradeorg/freqtrade:develop_plot
-    # # Enable GPU Image and GPU Resources (only relevant for freqAI)
-    # # Make sure to uncomment the whole deploy section
-    # deploy:
-    #   resources:
-    #     reservations:
-    #       devices:
-    #         - driver: nvidia
-    #           count: 1
-    #           capabilities: [gpu]
-    # Build step - only needed when additional dependencies are needed
-    # build:
-    #   context: .
-    #   dockerfile: "./docker/Dockerfile.custom"
+    # image: freqtradeorg/freqtrade:stable
+    image: freqtrade_with_numba
+    build:
+      context: .
+      dockerfile: "./docker/Dockerfile.custom"
     restart: unless-stopped
-    container_name: freqtrade
+    container_name: ${FREQTRADE__BOT_NAME:-Example_Test_Account}_${FREQTRADE__EXCHANGE__NAME:-binance}_${FREQTRADE__TRADING_MODE:-futures}-${FREQTRADE__STRATEGY:-NostalgiaForInfinityX5}
     volumes:
       - "./user_data:/freqtrade/user_data"
-    # Expose api on port 8080 (localhost only)
-    # Please read the https://www.freqtrade.io/en/stable/rest-api/ documentation
-    # for more information.
+      - "./user_data/data:/freqtrade/user_data/data"
+      - "./configs:/freqtrade/configs"
+      - "./${FREQTRADE__STRATEGY:-NostalgiaForInfinityX5}.py:/freqtrade/${FREQTRADE__STRATEGY:-NostalgiaForInfinityX5}.py"
     ports:
-      - "127.0.0.1:8080:8080"
+      - "${FREQTRADE__API_SERVER__LISTEN_PORT:-8080}:${FREQTRADE__API_SERVER__LISTEN_PORT:-8080}"
     # Default command used when running `docker compose up`
+    env_file:
+      - path: .env
+        required: false # default true
     command: >
       trade
-      --logfile /freqtrade/user_data/logs/freqtrade.log
-      --db-url sqlite:////freqtrade/user_data/tradesv3.sqlite
-      --config /freqtrade/user_data/config.json
-      --strategy SampleStrategy
+      --db-url sqlite:////freqtrade/user_data/${FREQTRADE__BOT_NAME:-Example_Test_Account}_${FREQTRADE__EXCHANGE__NAME:-binance}_${FREQTRADE__TRADING_MODE:-futures}-tradesv3.sqlite
+      --log-file user_data/logs/${FREQTRADE__BOT_NAME:-Example_Test_Account}-${FREQTRADE__EXCHANGE__NAME:-binance}-${FREQTRADE__STRATEGY:-NostalgiaForInfinityX5}-${FREQTRADE__TRADING_MODE:-futures}.log
+
+  restarter:
+    image: docker:cli
+    volumes: ["/var/run/docker.sock:/var/run/docker.sock"]
+    command:
+      [
+        "/bin/sh",
+        "-c",
+        "while true; do sleep 86400; docker restart ${FREQTRADE__BOT_NAME:-Example_Test_Account}_${FREQTRADE__EXCHANGE__NAME:-binance}_${FREQTRADE__TRADING_MODE:-futures}-${FREQTRADE__STRATEGY:-NostalgiaForInfinityX5}; done",
+      ]
+    restart: unless-stopped

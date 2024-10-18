@@ -1,11 +1,14 @@
-FROM freqtradeorg/freqtrade:develop
+ARG sourceimage=freqtradeorg/freqtrade
+ARG sourcetag=stable
+FROM ${sourceimage}:${sourcetag}
+USER root
 
-# Switch user to root if you must install something from apt
-# Don't forget to switch the user back below!
-# USER root
+# RUN apt-get update; \
+# 	apt-get install -y --no-install-recommends git git-lfs; \
+# 	\
+# 	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
+# 	rm -rf /var/lib/apt/lists/*
 
-# The below dependency - pyti - serves as an example. Please use whatever you need!
-RUN pip install --user pyti
-
-# Switch back to user (only if you required root above)
-# USER ftuser
+COPY --chown=1000:1000  tests/requirements.txt /freqtrade
+USER ftuser
+RUN pip install --upgrade pip && pip install --user --no-cache-dir --no-build-isolation -r /freqtrade/requirements.txt

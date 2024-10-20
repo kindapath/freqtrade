@@ -20,6 +20,7 @@ git pull
 cp NostalgiaForInfinityX5.py $FREQTRADE_HOME/user_data/strategies
 
 # copy configs for pairs
+echo "updating NFO pairs"
 cp configs/blacklist-bybit.json $FREQTRADE_HOME/configs
 cp configs/pairlist-volume-bybit-usdt.json $FREQTRADE_HOME/configs
 
@@ -38,8 +39,8 @@ if [ "$COMMIT_TO_LOCAL_REPO" = true ] ; then
     cd $FREQTRADE_HOME/user_data/strategies
     NFIversion=$(grep -oP '(?<=return ").*(?=")' NostalgiaForInfinityX5.py)
     echo $NFIversion
-    git add NostalgiaForInfinityX5.py
-    git add -A
+    # git add NostalgiaForInfinityX5.py
+    git add --all
     git commit -m "update: updated nfix strategy to version $NFIversion"
     git push
 

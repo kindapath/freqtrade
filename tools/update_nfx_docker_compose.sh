@@ -18,6 +18,11 @@ echo "updating NFO Strategy"
 cd $NFI_REPO_HOME
 git pull
 cp NostalgiaForInfinityX5.py $FREQTRADE_HOME/user_data/strategies
+
+# copy configs for pairs
+cp configs/blacklist-bybit.json $FREQTRADE_HOME/configs
+cp configs/pairlist-volume-bybit-usdt.json $FREQTRADE_HOME/configs
+
 echo "copied NFI Strategy to freqtrader"
 
 #optionally add the update strategy file to your own repo
@@ -34,6 +39,7 @@ if [ "$COMMIT_TO_LOCAL_REPO" = true ] ; then
     NFIversion=$(grep -oP '(?<=return ").*(?=")' NostalgiaForInfinityX5.py)
     echo $NFIversion
     git add NostalgiaForInfinityX5.py
+    git add -A
     git commit -m "update: updated nfix strategy to version $NFIversion"
     git push
 
